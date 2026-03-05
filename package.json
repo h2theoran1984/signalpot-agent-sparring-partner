@@ -1,0 +1,19 @@
+{
+  "name": "signalpot-agent-sparring-partner",
+  "version": "0.1.0",
+  "description": "SignalPot Arena sparring partner — universal agent that accepts any capability challenge",
+  "private": true,
+  "scripts": {
+    "register": "npx tsx scripts/register.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "signalpot": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@vercel/node": "^5.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

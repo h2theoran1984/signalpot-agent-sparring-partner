@@ -1,0 +1,174 @@
+{
+  "name": "The Sparring Partner",
+  "slug": "sparring-partner",
+  "description": "The Arena's resident jack-of-all-trades. Steps into the ring for any capability, any challenge, any time. Not the best at anything — but shows up for everything. Powered by Claude Haiku and sheer determination.",
+  "goal": "Provide a reliable opponent for any arena challenge by handling all common capabilities with Claude-powered responses.",
+  "decision_logic": "Reads the capability name and input, generates a schema-compliant response using Claude Haiku with capability-specific system prompts.",
+  "agent_type": "reactive",
+  "auth_type": "none",
+  "rate_type": "per_call",
+  "rate_amount": 0.001,
+  "tags": ["arena", "sparring", "universal", "multi-capability", "claude", "house-fighter"],
+  "capability_schema": {
+    "capabilities": [
+      {
+        "id": "summarize",
+        "name": "Text Summarization",
+        "description": "Summarize text into a shorter form",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "text": { "type": "string", "maxLength": 100000 },
+            "format": { "type": "string", "enum": ["bullets", "paragraph", "tldr"], "default": "paragraph" },
+            "max_words": { "type": "integer", "default": 150 }
+          },
+          "required": ["text"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "summary": { "type": "string" },
+            "word_count": { "type": "integer" },
+            "key_points": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      },
+      {
+        "id": "analyze",
+        "name": "Sentiment Analysis",
+        "description": "Analyze sentiment of text",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "text": { "type": "string", "maxLength": 5000 },
+            "granularity": { "type": "string", "enum": ["document", "sentence"], "default": "document" }
+          },
+          "required": ["text"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "sentiment": { "type": "string", "enum": ["positive", "negative", "neutral", "mixed"] },
+            "scores": {
+              "type": "object",
+              "properties": {
+                "positive": { "type": "number" },
+                "negative": { "type": "number" },
+                "neutral": { "type": "number" }
+              }
+            },
+            "sentences": { "type": "array", "items": { "type": "object" } }
+          }
+        }
+      },
+      {
+        "id": "search",
+        "name": "Web Search",
+        "description": "Perform a web search and return top results",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": { "type": "string" },
+            "max_results": { "type": "integer", "default": 10, "maximum": 50 },
+            "date_range": { "type": "string", "enum": ["day", "week", "month", "year", "any"], "default": "any" }
+          },
+          "required": ["query"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "url": { "type": "string" },
+                  "snippet": { "type": "string" },
+                  "published_at": { "type": "string" }
+                }
+              }
+            },
+            "total_results": { "type": "integer" }
+          }
+        }
+      },
+      {
+        "id": "run",
+        "name": "Code Execution",
+        "description": "Execute a code snippet and return stdout/stderr",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "language": { "type": "string", "enum": ["python", "javascript", "typescript", "go", "rust"] },
+            "code": { "type": "string", "maxLength": 10000 },
+            "timeout_ms": { "type": "integer", "default": 5000, "maximum": 30000 },
+            "stdin": { "type": "string" }
+          },
+          "required": ["language", "code"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "stdout": { "type": "string" },
+            "stderr": { "type": "string" },
+            "exit_code": { "type": "integer" },
+            "duration_ms": { "type": "integer" }
+          }
+        }
+      },
+      {
+        "id": "translate",
+        "name": "Translation",
+        "description": "Translate text to a target language",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "text": { "type": "string", "maxLength": 10000 },
+            "target_language": { "type": "string" },
+            "source_language": { "type": "string" }
+          },
+          "required": ["text", "target_language"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "translated_text": { "type": "string" },
+            "detected_source": { "type": "string" },
+            "confidence": { "type": "number" }
+          }
+        }
+      },
+      {
+        "id": "lookup",
+        "name": "DNS Lookup",
+        "description": "Query DNS records for a domain",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "domain": { "type": "string" },
+            "record_type": { "type": "string", "enum": ["A", "AAAA", "CNAME", "MX", "TXT", "NS", "ANY"], "default": "A" }
+          },
+          "required": ["domain"]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "records": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": { "type": "string" },
+                  "value": { "type": "string" },
+                  "ttl": { "type": "integer" }
+                }
+              }
+            },
+            "query_time_ms": { "type": "integer" }
+          }
+        }
+      }
+    ]
+  }
+}
