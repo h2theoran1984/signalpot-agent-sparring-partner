@@ -5,7 +5,7 @@
  * from signalpot.config.json and asks Claude to produce a matching response.
  * This makes the agent truly universal — it can handle ANY capability.
  */
-import { anthropic } from "./anthropic.js";
+import { anthropic, calcApiCost, type CostInfo } from "./anthropic.js";
 import config from "../signalpot.config.json";
 
 interface CapabilityDef {
@@ -44,6 +44,7 @@ const DEFAULT_SYSTEM =
 export interface HandlerResult {
   data: Record<string, unknown>;
   capability: string;
+  cost: CostInfo;
 }
 
 /**
@@ -82,6 +83,8 @@ Respond with ONLY valid JSON matching the output schema. No markdown, no explana
     messages: [{ role: "user", content: userPrompt }],
   });
 
+  const cost = calcApiCost(capabilityId, message.usage);
+
   const content = message.content[0];
   if (content.type !== "text") {
     throw new Error("Unexpected response type from Claude");
@@ -95,7 +98,7 @@ Respond with ONLY valid JSON matching the output schema. No markdown, no explana
 
   const data = JSON.parse(text) as Record<string, unknown>;
 
-  return { data, capability: capabilityId };
+  return { data, capability: capabilityId, cost };
 }
 
 /**
@@ -120,6 +123,8 @@ Based on the capability name and input, produce a reasonable JSON response. Resp
     messages: [{ role: "user", content: userPrompt }],
   });
 
+  const cost = calcApiCost(capabilityId, message.usage);
+
   const content = message.content[0];
   if (content.type !== "text") {
     throw new Error("Unexpected response type from Claude");
@@ -131,7 +136,7 @@ Based on the capability name and input, produce a reasonable JSON response. Resp
   }
 
   const data = JSON.parse(text) as Record<string, unknown>;
-  return { data, capability: capabilityId };
+  return { data, capability: capabilityId, cost };
 }
 
 /**

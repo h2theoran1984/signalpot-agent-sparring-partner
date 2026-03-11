@@ -88,5 +88,12 @@ async function handleMessageSend(params: MessageSendParams) {
         ],
       },
     ],
+    _meta: {
+      provider_cost: {
+        api_cost_usd: result.cost.api_cost_usd,
+        input_tokens: result.cost.input_tokens,
+        output_tokens: result.cost.output_tokens,
+      },
+    },
   };
 }
