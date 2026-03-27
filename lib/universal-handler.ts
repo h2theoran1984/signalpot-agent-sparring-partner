@@ -5,7 +5,7 @@
  * from signalpot.config.json and asks Claude to produce a matching response.
  * This makes the agent truly universal — it can handle ANY capability.
  */
-import { anthropic, calcApiCost, type CostInfo } from "./anthropic.js";
+import { getAnthropicClient, calcApiCost, type CostInfo } from "./anthropic.js";
 import config from "../signalpot.config.json";
 
 interface CapabilityDef {
@@ -76,6 +76,8 @@ ${JSON.stringify(cap.outputSchema, null, 2)}
 
 Respond with ONLY valid JSON matching the output schema. No markdown, no explanation, no code blocks. Just the JSON object.`;
 
+  const anthropic = await getAnthropicClient();
+
   const message = await anthropic.messages.create({
     model: "claude-haiku-4-5-20251001",
     max_tokens: 2048,
@@ -115,6 +117,8 @@ INPUT:
 ${JSON.stringify(input, null, 2)}
 
 Based on the capability name and input, produce a reasonable JSON response. Respond with ONLY valid JSON. No markdown, no explanation.`;
+
+  const anthropic = await getAnthropicClient();
 
   const message = await anthropic.messages.create({
     model: "claude-haiku-4-5-20251001",
